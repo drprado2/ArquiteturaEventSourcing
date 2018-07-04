@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ArquiteturaEventSourcing.Domain.Core\ArquiteturaEventSourcing.Domain.Core.csproj" />
+    <ProjectReference Include="..\ArquiteturaEventSourcing.Domain\ArquiteturaEventSourcing.Domain.csproj" />
+    <ProjectReference Include="..\ArquiteturaEventSourcing.Infra\ArquiteturaEventSourcing.Infra.csproj" />
+  </ItemGroup>
+
+</Project>
