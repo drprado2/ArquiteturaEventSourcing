@@ -10,7 +10,7 @@ namespace ArquiteturaEventSourcing.Infra.Mappings
     {
         public CommandMapping(ModelBuilder builder)
         {
-            var customerMap = builder.Entity<Command>();
+            var customerMap = builder.Entity<CommandEntity>();
 
             customerMap.HasKey(x => x.Id);
             customerMap.Property(x => x.Time).IsRequired();

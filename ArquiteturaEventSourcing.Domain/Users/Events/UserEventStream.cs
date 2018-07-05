@@ -4,32 +4,13 @@ using ArquiteturaEventSourcing.Domain.Users.Entities;
 
 namespace ArquiteturaEventSourcing.Domain.Users.Events
 {
-    public class UserEventStream
+    public class UserEventStream : IEventObserver
     {
         private readonly IUserRepository _repository;
 
         public UserEventStream(IUserRepository repository)
         {
             _repository = repository;
-        }
-
-        public void Stream(DomainEvent @event)
-        {
-            var userEvent =  (UserEvent)@event;
-            switch (userEvent.Type)
-            {
-                case (DomainEventType.Creation):
-                    StreamCreateEvent(userEvent);
-                    break;
-
-                case (DomainEventType.Update):
-                    StreamUpdateEvent(userEvent);
-                    break;
-
-                case (DomainEventType.Removal):
-                    StreamDeleteEvent(userEvent);
-                    break;
-            }
         }
 
         public void StreamCreateEvent(UserEvent @event)
@@ -49,6 +30,25 @@ namespace ArquiteturaEventSourcing.Domain.Users.Events
         {
             var user = _repository.GetById(@event.Id);
             _repository.Delete(user);
+        }
+
+        public void Handle(DomainEvent @event)
+        {
+            var userEvent =  (UserEvent)@event;
+            switch (userEvent.Type)
+            {
+                case (DomainEventType.Creation):
+                    StreamCreateEvent(userEvent);
+                    break;
+
+                case (DomainEventType.Update):
+                    StreamUpdateEvent(userEvent);
+                    break;
+
+                case (DomainEventType.Removal):
+                    StreamDeleteEvent(userEvent);
+                    break;
+            }
         }
     }
 }

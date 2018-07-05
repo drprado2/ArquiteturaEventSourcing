@@ -10,7 +10,7 @@ namespace ArquiteturaEventSourcing.Infra.DbContexts
         {
         }
 
-        public DbSet<Command> Commands { get; set; }
+        public DbSet<CommandEntity> Commands { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

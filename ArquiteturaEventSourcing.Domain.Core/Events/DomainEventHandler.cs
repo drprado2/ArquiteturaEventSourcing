@@ -10,22 +10,22 @@ namespace ArquiteturaEventSourcing.Domain.Core.Events
 
         private readonly IEventRepository _eventRepository;
 
-        private IDictionary<Type, List<Action<DomainEvent>>> _observers;
+        private IDictionary<Type, List<IEventObserver>> _observers;
 
         public DomainEventHandler(IEventRepository eventRepository)
         {
-            _observers = new Dictionary<Type, List<Action<DomainEvent>>>();
+            _observers = new Dictionary<Type, List<IEventObserver>>();
             _eventRepository = eventRepository;
         }
 
-        public void AddObserver(DomainEvent @event, Action<DomainEvent> consumer)
+        public void AddObserver<TEvent>(IEventObserver consumer) where TEvent : DomainEvent
         {
             lock (_objLock)
             {
-                if (_observers[@event.GetType()] == null)
-                    _observers.Add(@event.GetType(), new List<Action<DomainEvent>>());
+                if (!_observers.ContainsKey(typeof(TEvent)))
+                    _observers.Add(typeof(TEvent), new List<IEventObserver>());
 
-                _observers[@event.GetType()].Add(consumer);
+                _observers[typeof(TEvent)].Add(consumer);
             }
         }
 
@@ -36,7 +36,7 @@ namespace ArquiteturaEventSourcing.Domain.Core.Events
             var observer = _observers[@event.GetType()];
 
             if(observer != null)
-                observer.ForEach(consumer => consumer(@event));
+                observer.ForEach(consumer => consumer.Handle(@event));
         }
     }
 }

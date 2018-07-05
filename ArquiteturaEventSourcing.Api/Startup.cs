@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArquiteturaEventSourcing.Domain;
 using ArquiteturaEventSourcing.Domain.Core.Data;
 using ArquiteturaEventSourcing.Domain.Core.Events;
 using ArquiteturaEventSourcing.Domain.Core.Validations;
@@ -32,13 +33,18 @@ namespace ArquiteturaEventSourcing.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddEntityFrameworkInMemoryDatabase().AddDbContext<EntitiesContext>();
-            services.AddEntityFrameworkInMemoryDatabase().AddDbContext<CommandsContext>();
-            services.AddEntityFrameworkInMemoryDatabase().AddDbContext<EventsContext>();
+            services.AddEntityFrameworkInMemoryDatabase().AddDbContext<EntitiesContext>(options => options.UseInMemoryDatabase("EntitiesDB"));
+            services.AddEntityFrameworkInMemoryDatabase().AddDbContext<CommandsContext>(options => options.UseInMemoryDatabase("CommandsDB"));
+            services.AddEntityFrameworkInMemoryDatabase().AddDbContext<EventsContext>(options => options.UseInMemoryDatabase("EventsDB"));
 
-            services.BuildServiceProvider().GetService<EntitiesContext>().Database.Migrate();
-            services.BuildServiceProvider().GetService<CommandsContext>().Database.Migrate();
-            services.BuildServiceProvider().GetService<EventsContext>().Database.Migrate();
+            RegisterDependencyInjection(services);
+
+            var domainStartup = services.BuildServiceProvider().GetService<DomainStartup>();
+            domainStartup.Start();
+
+            //services.BuildServiceProvider().GetService<CommandsContext>().Database.Migrate();
+            //services.BuildServiceProvider().GetService<EventsContext>().Database.Migrate();
+            //services.BuildServiceProvider().GetService<EntitiesContext>().Database.Migrate();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -70,6 +76,7 @@ namespace ArquiteturaEventSourcing.Api
         private void RegisterDependencyInjection(IServiceCollection services)
         {
             services.AddSingleton<DomainEventHandler>();
+            services.AddSingleton<DomainStartup>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<UserEventStream>();
             services.AddScoped<ICommandRepository, CommandRepository>();

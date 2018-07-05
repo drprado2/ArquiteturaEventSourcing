@@ -3,6 +3,7 @@ using ArquiteturaEventSourcing.Domain.Core.Events;
 using ArquiteturaEventSourcing.Domain.Core.Validations;
 using ArquiteturaEventSourcing.Domain.Users.Data;
 using ArquiteturaEventSourcing.Domain.Users.Events;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,9 +30,13 @@ namespace ArquiteturaEventSourcing.Domain.Users.Commands
             eventBus = _eventBus;
         }
 
+        [JsonProperty]
         public string Name { get; private set; }
+        [JsonProperty]
         public string Password { get; private set; }
+        [JsonProperty]
         public string Email { get; private set; }
+        [JsonProperty]
         public string Login { get; private set; }
 
         public override void Execute()
@@ -49,6 +54,11 @@ namespace ArquiteturaEventSourcing.Domain.Users.Commands
             };
 
             _eventBus.AddEvent(newUserEvent);
+        }
+
+        public override string Serialize()
+        {
+            return JsonConvert.SerializeObject(this);
         }
 
         public override ValidationResult Validate()
